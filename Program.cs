@@ -10,7 +10,6 @@ namespace KohonenMap
     {
         static void readData(ref List<List<double>> inputData, ref List<List<int>> outputVectors, out int featuresCnt, out int outputLen)
         {
-            //читаем данные с диска
             using (System.IO.StreamReader sr = new System.IO.StreamReader("data/cancer1.dt"))
             {
                 string line;
@@ -30,14 +29,12 @@ namespace KohonenMap
                 }
             }
         }
-
-        //mean
+        
         static double calcMean(IEnumerable<double> values)
         {
             return values.Average();
         }
-
-        //std
+        
         static double calcStdDev(IEnumerable<double> values)
         {
             double ret = 0;   
@@ -49,22 +46,20 @@ namespace KohonenMap
 
         static void run(int latticeSize)
         {
-            int ITERATIONS = 1; //количетво итераций для сбора статистики
+            int ITERATIONS = 1;
             var culture = CultureInfo.InvariantCulture; 
             Stopwatch sw;
-
-            //число характеристики и размер выходного вектора
+            
             int featuresCnt;
             int outputLen;
-            //Считываем данные из файла
+
             List<List<double>> inputData = new List<List<double>>();
             List<List<int>> outputVectors = new List<List<int>>();
             readData(ref inputData, ref outputVectors, out featuresCnt, out outputLen);
             
-            //сюда складываем, сколько заняла по времени каждая итерация алгоритма
             List<double> executionTime = new List<double>();
-
-            //Здесь закомментирована итеративная процедура обучения -- можно без проблем откомментить
+            
+            //ITERATIVE
             /*Console.WriteLine("Iterative learning:");           
             for (int repeat = 0; repeat < ITERATIONS; ++repeat)
             {
@@ -75,10 +70,8 @@ namespace KohonenMap
                 Console.WriteLine("Execution time: {0}ms", sw.Elapsed.TotalMilliseconds);
                 executionTime.Add(sw.Elapsed.TotalMilliseconds);
             }
-            //Первое измерение времени можно убрать, так как на тот момент ничего не закешировано и сравнивать нехорошо.
             executionTime.RemoveAt(0);
-
-            //считаем среднее время, отклонение, ...
+            
             double mean_ia = calcMean(executionTime);
             double std_ia = calcStdDev(executionTime);
             double l_ia = Math.Max(0, Math.Round((mean_ia - std_ia), 3));
@@ -86,8 +79,7 @@ namespace KohonenMap
             Console.WriteLine(l_ia.ToString(culture) + ", " + r_ia.ToString(culture));*/
 
             executionTime.Clear();
-
-            //Пакетное обучение, всё тоже самое
+            
             Console.WriteLine("\nBatch learning:");
             for (int repeat = 0; repeat < ITERATIONS; ++repeat)
             {
@@ -109,8 +101,8 @@ namespace KohonenMap
 
         static void Main(string[] args)
         {
-            int latticeSize = 3; //Convert.ToInt32(args[1]); //Считываем размер карты (далее используется слово сетка)
-            run(latticeSize); //основная процедура
+            int latticeSize = 3; //Convert.ToInt32(args[1]);
+            run(latticeSize);
             Console.WriteLine("Done!");
             Console.ReadKey();
         }

@@ -5,10 +5,8 @@ using System;
 
 namespace KohonenMap
 {
-    //общий класс для удобства представления алгоритмов
     class Algorithm
     {
-        //передаем в конструктор параметры алгоритма (всё по методичке)
         public Algorithm(int latticeSize, int featuresCnt, 
                          int epochsNumber = 1000, double learningRate = 0.01, int tau2 = 1000, double trainingError = 1e-3)
         {
@@ -23,8 +21,7 @@ namespace KohonenMap
             width_ = neurons_.getWidth();
             tau1_ = epochsNumber_ / (width_ * 1.0);            
         }
-
-        //инициализируем веса нейронов-победителей 
+        
         protected List<List<double>> initWinnerWeights(int inputDataLen)
         {
             List<List<double>> winnerWeights = new List<List<double>>(inputDataLen);
@@ -34,10 +31,7 @@ namespace KohonenMap
             }
             return winnerWeights;
         }
-
-        //вычисляем коэффициент обновления 
-        //1 - учитываем окрестность (уменьшается с течением времени) distCoef
-        //2 - учитываем скорость обучения (learning rate), также уменьшается с течением времени time
+        
         protected double calcUpdateCoef(Tuple<int, int> neuronWinnerCoord, int rowInd, int colInd, int time)
         {
             double latticeDist = Utility.calcLatticeDist(neuronWinnerCoord, rowInd, colInd);           
@@ -46,8 +40,7 @@ namespace KohonenMap
             double learningRateCoef = learningRate_ * Math.Exp(-time / (tau2_ * 1.0));
             return learningRateCoef * distCoef;
         }
-
-        //сохраняем веса в файл
+        
         protected void storeLatticeWeights(string filename)
         {
             var culture = CultureInfo.InvariantCulture;

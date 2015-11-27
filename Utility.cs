@@ -4,10 +4,8 @@ using System.Linq;
 
 namespace KohonenMap
 {
-    //утилитные функции 
     static class Utility
     {
-        //метрика Евклида
         public static double euclidMetrics(ref List<double> x, ref List<double> y)
         {
             double proximity = 0.0;
@@ -17,14 +15,12 @@ namespace KohonenMap
             }
             return Math.Sqrt(proximity);
         }
-
-        //функция активации (сигмоида)
+        
         public static double calculateProximity(ref List<double> singleObservation, List<double> neuronWeights)
         {
             return Math.Exp(-euclidMetrics(ref singleObservation, ref neuronWeights));
         }
-
-        //считаем близость между наблюдением и весами всех нейронов
+        
         public static double[,] calcProximityMetrics(ref List<double> input, ref Lattice neurons)
         {
             double[,] distances = new double[neurons.getSize(), neurons.getSize()];
@@ -39,8 +35,7 @@ namespace KohonenMap
             }
             return distances;
         }
-
-        //находим ближайший к наблюдению нейрон используя массив расстояний (между весами нейронов и наблюдением)
+        
         public static Tuple<int, int> findClosestNeuron(ref double[,] distances, int latticeSize)
         {
             double maxProximity = 0.0;
@@ -61,10 +56,9 @@ namespace KohonenMap
             }
             return new Tuple<int, int>(maxProximityXCoord, maxProximityYCoord);
         }
-
-        //Находим ближайший популярный нейрон (не мертвый)
+        
         public static Tuple<int, int> findClosestPopularNeuron(ref double[,] distances, 
-                                                               ref SortedDictionary<Tuple<int, int>, List<int>> aliveNeurons, 
+                                                               ref NeuronDict aliveNeurons, 
                                                                int latticeSize)
         {            
             List<Tuple<double, int, int>> temp = new List<Tuple<double, int, int>>();
@@ -73,20 +67,16 @@ namespace KohonenMap
                 for (int colInd = 0; colInd < latticeSize; ++colInd)
                 {
                     Tuple<int, int> coord = new Tuple<int, int>(rowInd, colInd);
-                    //проверяем, что нейрон живой, прежде чем переносить к нему наблюдения от мертвых нейронов
                     if (aliveNeurons.ContainsKey(coord)) 
                     {
                         temp.Add(new Tuple<double, int, int>(distances[rowInd, colInd], rowInd, colInd));
                     }
                 }
             }
-            //Упорядочиваем нейроны по убыванию популярности (числу наблюдений отнесенных к ним)
             temp = temp.OrderByDescending(i => i.Item1).ToList();
-            //берем самый популярный живой нейрон
             return new Tuple<int, int>(temp[0].Item2, temp[0].Item3);
         }
-
-        //Считаем ошибку представления
+        
         public static double calculateTrainingError(ref List<List<double>> winnerWeights, ref List<List<double>> inputData)
         {
             double error = 0.0;
@@ -99,8 +89,7 @@ namespace KohonenMap
             }
             return error;
         }
-
-        //Поэлементная разница
+        
         public static List<double> vectorDifference(ref List<double> x, ref List<double> y)
         {
             List<double> diff = new List<double>();
@@ -111,16 +100,14 @@ namespace KohonenMap
 
             return diff;
         }
-
-        //считаем расстояние между нейронами в сетке
+        
         public static double calcLatticeDist(Tuple<int, int> neuronWinnerCoord, int x, int y)
         {
             List<double> neuronWinner = new List<double>(2) { neuronWinnerCoord.Item1, neuronWinnerCoord.Item2 };
             List<double> other = new List<double>(2) { x, y };
             return euclidMetrics(ref neuronWinner, ref other);
         }
-
-        //инициализируем список списков
+        
         public static void initLabels(out List<int>[,] labels, int latticeSize)
         {
             labels = new List<int>[latticeSize, latticeSize];
@@ -132,8 +119,7 @@ namespace KohonenMap
                 }
             }
         }
-
-        //отдельный метод для очистки
+        
         public static void clearLabels(ref List<int>[,] labels, int latticeSize)
         {
             for (int x = 0; x < latticeSize; ++x)

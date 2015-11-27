@@ -2,10 +2,8 @@
 
 namespace KohonenMap
 {
-    //Класс для представления карты Кохонена
     class Lattice
     {
-        //передаем размер сетки и число характеристик
         public Lattice(int size, int featuresCnt)
         {
             featuresCnt_ = featuresCnt;
@@ -18,7 +16,6 @@ namespace KohonenMap
             {
                 for (int colInd = 0; colInd < size_; ++colInd)
                 {
-                    //заполняем карту нейронами
                     lattice_[rowInd, colInd] = new Neuron(featuresCnt, r);
                 }
             }
@@ -28,26 +25,22 @@ namespace KohonenMap
         {
             return featuresCnt_;
         }
-
-        //размер карты (как ширина, так и высота)
+        
         public int getSize()
         {
             return size_;
         }
-
-        //начальный размер окрестности нейрона
+        
         public int getWidth()
         {
             return width_;
         }
-
-        //получить нейрон по его координатам
+        
         public Neuron get(int x, int y)
         {
             return lattice_[x, y];
         }
-
-        //получить нейрон по его координатам (перегрузка)
+        
         public Neuron get(Tuple<int, int> coord)
         {
             return lattice_[coord.Item1, coord.Item2];
