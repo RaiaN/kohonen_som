@@ -1,1 +1,1 @@
-This program allows to cluster data using self-organizing maps. It learns either iterative or batch learning.
+This program allows to cluster data using self-organizing maps. There are two learning approaches implemented: iterative and batch. 
