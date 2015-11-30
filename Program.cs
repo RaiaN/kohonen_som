@@ -8,7 +8,7 @@ namespace KohonenMap
 {
     class Program
     {
-        static void readData(ref List<List<double>> inputData, ref List<List<int>> outputVectors, out int featuresCnt, out int outputLen)
+        static void readData(List<List<double>> inputData, List<List<int>> outputVectors, out int featuresCnt, out int outputLen)
         {
             using (System.IO.StreamReader sr = new System.IO.StreamReader("data/cancer1.dt"))
             {
@@ -55,7 +55,7 @@ namespace KohonenMap
 
             List<List<double>> inputData = new List<List<double>>();
             List<List<int>> outputVectors = new List<List<int>>();
-            readData(ref inputData, ref outputVectors, out featuresCnt, out outputLen);
+            readData(inputData, outputVectors, out featuresCnt, out outputLen);
             
             List<double> executionTime = new List<double>();
             
@@ -85,7 +85,7 @@ namespace KohonenMap
             {
                 sw = Stopwatch.StartNew();
                 BatchAlgorithm ba = new BatchAlgorithm(latticeSize, featuresCnt);
-                ba.run(ref inputData, ref outputVectors);
+                ba.run(inputData, outputVectors);
                 sw.Stop();
                 Console.WriteLine("Execution time: {0}ms", sw.Elapsed.TotalMilliseconds);
                 executionTime.Add(sw.Elapsed.TotalMilliseconds);

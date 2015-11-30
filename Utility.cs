@@ -6,7 +6,7 @@ namespace KohonenMap
 {
     static class Utility
     {
-        public static double euclidMetrics(ref List<double> x, ref List<double> y)
+        public static double euclidMetrics(List<double> x, List<double> y)
         {
             double proximity = 0.0;
             foreach (var xy in x.Zip(y, (xval, yval) => new { xval = xval, yval = yval }))
@@ -16,12 +16,12 @@ namespace KohonenMap
             return Math.Sqrt(proximity);
         }
         
-        public static double calculateProximity(ref List<double> singleObservation, List<double> neuronWeights)
+        public static double calculateProximity(List<double> singleObservation, List<double> neuronWeights)
         {
-            return Math.Exp(-euclidMetrics(ref singleObservation, ref neuronWeights));
+            return Math.Exp(-euclidMetrics(singleObservation, neuronWeights));
         }
         
-        public static double[,] calcProximityMetrics(ref List<double> input, ref Lattice neurons)
+        public static double[,] calcProximityMetrics(List<double> input, Lattice neurons)
         {
             double[,] distances = new double[neurons.getSize(), neurons.getSize()];
             int latticeSize = neurons.getSize();
@@ -30,13 +30,18 @@ namespace KohonenMap
             {
                 for (int colInd = 0; colInd < latticeSize; ++colInd)
                 {
-                    distances[rowInd, colInd] = calculateProximity(ref input, neurons.get(rowInd, colInd).weights_);
+                    distances[rowInd, colInd] = calculateProximity(input, neurons.get(rowInd, colInd).weights_);
                 }
             }
             return distances;
         }
+
+        public static Tuple<int, int> neuronIndToCoord(int ni, int latticeSize)
+        {
+            return new Tuple<int, int>(ni / latticeSize, ni % latticeSize);
+        }
         
-        public static Tuple<int, int> findClosestNeuron(ref double[,] distances, int latticeSize)
+        public static Tuple<int, int> findClosestNeuron(double[,] distances, int latticeSize)
         {
             double maxProximity = 0.0;
             int maxProximityXCoord = 0,
@@ -57,8 +62,8 @@ namespace KohonenMap
             return new Tuple<int, int>(maxProximityXCoord, maxProximityYCoord);
         }
         
-        public static Tuple<int, int> findClosestPopularNeuron(ref double[,] distances, 
-                                                               ref NeuronDict aliveNeurons, 
+        public static Tuple<int, int> findClosestPopularNeuron(double[,] distances, 
+                                                               NeuronDict aliveNeurons, 
                                                                int latticeSize)
         {            
             List<Tuple<double, int, int>> temp = new List<Tuple<double, int, int>>();
@@ -77,20 +82,20 @@ namespace KohonenMap
             return new Tuple<int, int>(temp[0].Item2, temp[0].Item3);
         }
         
-        public static double calculateTrainingError(ref List<List<double>> winnerWeights, ref List<List<double>> inputData)
+        public static double calculateTrainingError(List<List<double>> winnerWeights, List<List<double>> inputData)
         {
             double error = 0.0;
             for (int winnerInd = 0; winnerInd < inputData.Count(); ++winnerInd)
             {
                 List<double> weights = winnerWeights[winnerInd];
                 List<double> data = inputData[winnerInd];
-                double currError = euclidMetrics(ref weights, ref data);
+                double currError = euclidMetrics(weights, data);
                 error += currError * currError;
             }
             return error;
         }
         
-        public static List<double> vectorDifference(ref List<double> x, ref List<double> y)
+        public static List<double> vectorDifference(List<double> x, List<double> y)
         {
             List<double> diff = new List<double>();
             for (int ind = 0; ind < x.Count; ++ind)
@@ -101,11 +106,11 @@ namespace KohonenMap
             return diff;
         }
         
-        public static double calcLatticeDist(Tuple<int, int> neuronWinnerCoord, int x, int y)
+        public static double calcLatticeDist(Tuple<int, int> aCoord, Tuple<int, int> bCoord)
         {
-            List<double> neuronWinner = new List<double>(2) { neuronWinnerCoord.Item1, neuronWinnerCoord.Item2 };
-            List<double> other = new List<double>(2) { x, y };
-            return euclidMetrics(ref neuronWinner, ref other);
+            List<double> aNeuron = new List<double>(2) { aCoord.Item1, aCoord.Item2 };
+            List<double> bNeuron = new List<double>(2) { bCoord.Item1, bCoord.Item2 };
+            return euclidMetrics(aNeuron, bNeuron);
         }
         
         public static void initLabels(out List<int>[,] labels, int latticeSize)
@@ -120,7 +125,7 @@ namespace KohonenMap
             }
         }
         
-        public static void clearLabels(ref List<int>[,] labels, int latticeSize)
+        public static void clearLabels(List<int>[,] labels, int latticeSize)
         {
             for (int x = 0; x < latticeSize; ++x)
             {

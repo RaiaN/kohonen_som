@@ -32,9 +32,9 @@ namespace KohonenMap
             return winnerWeights;
         }
         
-        protected double calcUpdateCoef(Tuple<int, int> neuronWinnerCoord, int rowInd, int colInd, int time)
+        protected double calcUpdateCoef(Tuple<int, int> neuronWinnerCoord, Tuple<int, int> otherNeuron, int time)
         {
-            double latticeDist = Utility.calcLatticeDist(neuronWinnerCoord, rowInd, colInd);           
+            double latticeDist = Utility.calcLatticeDist(neuronWinnerCoord, otherNeuron);           
             double delta = width_ * Math.Exp(-time / tau1_);
             double distCoef = Math.Exp(-latticeDist * latticeDist / (2 * delta * delta));
             double learningRateCoef = learningRate_ * Math.Exp(-time / (tau2_ * 1.0));
